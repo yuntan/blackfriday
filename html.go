@@ -946,3 +946,19 @@ func (options *Html) ensureUniqueHeaderID(id string) string {
 
 	return id
 }
+
+func (options *Html) Math(out *bytes.Buffer, equation []byte, inline bool) {
+	if inline {
+		out.WriteString("\\(")
+	} else {
+		out.WriteString("\\[")
+	}
+
+	attrEscape(out, equation)
+
+	if inline {
+		out.WriteString("\\)")
+	} else {
+		out.WriteString("\\]")
+	}
+}
