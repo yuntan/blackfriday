@@ -400,10 +400,19 @@ func (options *Html) ListItem(out *bytes.Buffer, text []byte, flags int) {
 		flags&LIST_ITEM_BEGINNING_OF_LIST != 0 {
 		doubleSpace(out)
 	}
+	checkbox := false
 	if flags&LIST_TYPE_TERM != 0 {
 		out.WriteString("<dt>")
 	} else if flags&LIST_TYPE_DEFINITION != 0 {
 		out.WriteString("<dd>")
+	} else if bytes.HasPrefix(text, []byte("[ ] ")) {
+		checkbox = true
+		out.WriteString(`<li><input type="checkbox" disabled><label>`)
+		text = text[4:]
+	} else if bytes.HasPrefix(text, []byte("[x] ")) || bytes.HasPrefix(text, []byte("[X] ")) {
+		checkbox = true
+		out.WriteString(`<li><input type="checkbox" checked disabled><label>`)
+		text = text[4:]
 	} else {
 		out.WriteString("<li>")
 	}
@@ -412,6 +421,8 @@ func (options *Html) ListItem(out *bytes.Buffer, text []byte, flags int) {
 		out.WriteString("</dt>\n")
 	} else if flags&LIST_TYPE_DEFINITION != 0 {
 		out.WriteString("</dd>\n")
+	} else if checkbox {
+		out.WriteString("</label></li>\n")
 	} else {
 		out.WriteString("</li>\n")
 	}
