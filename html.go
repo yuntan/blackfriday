@@ -407,11 +407,11 @@ func (options *Html) ListItem(out *bytes.Buffer, text []byte, flags int) {
 		out.WriteString("<dd>")
 	} else if bytes.HasPrefix(text, []byte("[ ] ")) {
 		checkbox = true
-		out.WriteString(`<li><input type="checkbox" disabled><label>`)
+		out.WriteString(`<li class="tasklist-item"><input type="checkbox" disabled><label>`)
 		text = text[4:]
 	} else if bytes.HasPrefix(text, []byte("[x] ")) || bytes.HasPrefix(text, []byte("[X] ")) {
 		checkbox = true
-		out.WriteString(`<li><input type="checkbox" checked disabled><label>`)
+		out.WriteString(`<li class="tasklist-item"><input type="checkbox" checked disabled><label>`)
 		text = text[4:]
 	} else {
 		out.WriteString("<li>")
