@@ -4,7 +4,7 @@ Markdown to HTML converter for [SyaroNote](https://github.com/OUCC/SyaroNote)
 Forked from russross/blackfriday
 
 ## Features
-### Math
+### Math `EXTENSION_LATEX_MATH`
 LaTeX inline and display math surrounded by `$` or `$$`.
 
 ```markdown
@@ -19,7 +19,7 @@ $$ x^y_z = X^Y_Z $$
 <p>\[ x^y_z = X^Y_Z \]</p>
 ```
 
-### Check List
+### Task list
 ```markdown
 - [ ] checkbox
 - [X] checked
@@ -27,8 +27,35 @@ $$ x^y_z = X^Y_Z $$
 
 ```html
 <ul>
-<li><input type="checkbox" disabled><label>checkbox</label></li>
-<li><input type="checkbox" checked disabled><label>checked</label></li>
+<li class="tasklist-item"><input type="checkbox" disabled><label>checkbox</label></li>
+<li class="tasklist-item"><input type="checkbox" checked disabled><label>checked</label></li>
+</ul>
+
+```
+
+### Figure `HTML_IMAGES_AS_FIGURE`
+```markdown
+![image caption](pass/to/image)
+```
+
+```html
+<p><figure><img src="pass/to/image" alt="image caption"><figcaption>image caption</figcaption></figure></p>
+```
+
+### WikiLink `EXTENSION_WIKI_LINK`
+```markdown
+[[WikiLink]] [normal link](http://google.co.jp)
+
+* [Home](/)
+* [[Sample Page]]
+```
+
+```html
+<p><a href="WikiLink">WikiLink</a> <a href="http://google.co.jp" target="_blank">normal link</a></p>
+
+<ul>
+<li><a href="/">Home</a></li>
+<li><a href="Sample Page">Sample Page</a></li>
 </ul>
 ```
 
