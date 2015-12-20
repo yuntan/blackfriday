@@ -42,6 +42,7 @@ const (
 	HTML_SMARTYPANTS_LATEX_DASHES              // enable LaTeX-style dashes (with HTML_USE_SMARTYPANTS)
 	HTML_SMARTYPANTS_ANGLED_QUOTES             // enable angled double quotes (with HTML_USE_SMARTYPANTS) for double quotes rendering
 	HTML_FOOTNOTE_RETURN_LINKS                 // generate a link at the end of a footnote to return to the source
+	HTML_IMAGES_AS_FIGURE
 )
 
 var (
@@ -527,6 +528,9 @@ func (options *Html) Image(out *bytes.Buffer, link []byte, title []byte, alt []b
 		return
 	}
 
+	if options.flags&HTML_IMAGES_AS_FIGURE != 0 {
+		out.WriteString("<figure>")
+	}
 	out.WriteString("<img src=\"")
 	options.maybeWriteAbsolutePrefix(out, link)
 	attrEscape(out, link)
@@ -541,6 +545,15 @@ func (options *Html) Image(out *bytes.Buffer, link []byte, title []byte, alt []b
 
 	out.WriteByte('"')
 	out.WriteString(options.closeTag)
+
+	if options.flags&HTML_IMAGES_AS_FIGURE != 0 {
+		if len(alt) > 0 {
+			out.WriteString("<figcaption>")
+			out.Write(alt)
+			out.WriteString("</figcaption>")
+		}
+		out.WriteString("</figure>")
+	}
 }
 
 func (options *Html) LineBreak(out *bytes.Buffer) {
