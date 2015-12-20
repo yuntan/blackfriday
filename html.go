@@ -608,6 +608,10 @@ func (options *Html) Link(out *bytes.Buffer, link []byte, title []byte, content 
 	return
 }
 
+func (options *Html) WikiLink(out *bytes.Buffer, link []byte) {
+	WikiLinkWorker(out, link)
+}
+
 func (options *Html) RawHtmlTag(out *bytes.Buffer, text []byte) {
 	if options.flags&HTML_SKIP_HTML != 0 {
 		return

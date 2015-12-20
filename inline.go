@@ -186,6 +186,7 @@ type linkType int
 
 const (
 	linkNormal linkType = iota
+	linkWiki
 	linkImg
 	linkDeferredFootnote
 	linkInlineFootnote
@@ -199,18 +200,22 @@ func link(p *parser, out *bytes.Buffer, data []byte, offset int) int {
 	}
 
 	// [text] == regular link
+	// [[test]] == wiki link
 	// ![alt] == image
 	// ^[text] == inline footnote
 	// [^refId] == deferred footnote
 	var t linkType
 	if offset > 0 && data[offset-1] == '!' {
 		t = linkImg
-	} else if p.flags&EXTENSION_FOOTNOTES != 0 {
-		if offset > 0 && data[offset-1] == '^' {
-			t = linkInlineFootnote
-		} else if len(data)-1 > offset && data[offset+1] == '^' {
-			t = linkDeferredFootnote
-		}
+	} else if p.flags&EXTENSION_FOOTNOTES != 0 &&
+		offset > 0 && data[offset-1] == '^' {
+		t = linkInlineFootnote
+	} else if p.flags&EXTENSION_FOOTNOTES != 0 &&
+		len(data)-1 > offset && data[offset+1] == '^' {
+		t = linkDeferredFootnote
+	} else if p.flags&EXTENSION_WIKI_LINK != 0 &&
+		len(data)-1 > offset && data[offset+1] == '[' {
+		t = linkWiki
 	}
 
 	data = data[offset:]
@@ -222,7 +227,7 @@ func link(p *parser, out *bytes.Buffer, data []byte, offset int) int {
 		textHasNl               = false
 	)
 
-	if t == linkDeferredFootnote {
+	if t == linkDeferredFootnote || t == linkWiki {
 		i++
 	}
 
@@ -251,7 +256,11 @@ func link(p *parser, out *bytes.Buffer, data []byte, offset int) int {
 	}
 
 	txtE := i
-	i++
+	if t == linkWiki {
+		i += 2
+	} else {
+		i++
+	}
 
 	// skip any amount of whitespace or newline
 	// (this is much more lax than original markdown syntax)
@@ -261,6 +270,10 @@ func link(p *parser, out *bytes.Buffer, data []byte, offset int) int {
 
 	// inline style link
 	switch {
+	case t == linkWiki:
+		link = data[2:txtE]
+		i = txtE + 2
+
 	case i < len(data) && data[i] == '(':
 		// skip initial whitespace
 		i++
@@ -487,6 +500,8 @@ func link(p *parser, out *bytes.Buffer, data []byte, offset int) int {
 	if txtE > 1 {
 		if t == linkImg {
 			content.Write(data[1:txtE])
+		} else if t == linkWiki {
+			// do nothing
 		} else {
 			// links cannot contain other links, so turn off link parsing temporarily
 			insideLink := p.insideLink
@@ -518,6 +533,9 @@ func link(p *parser, out *bytes.Buffer, data []byte, offset int) int {
 		} else {
 			p.r.Link(out, uLink, title, content.Bytes())
 		}
+
+	case linkWiki:
+		p.r.WikiLink(out, link)
 
 	case linkImg:
 		outSize := out.Len()

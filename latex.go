@@ -238,6 +238,10 @@ func (options *Latex) Link(out *bytes.Buffer, link []byte, title []byte, content
 	out.WriteString("}")
 }
 
+func (options *Latex) WikiLink(out *bytes.Buffer, link []byte) {
+	// do nothing
+}
+
 func (options *Latex) RawHtmlTag(out *bytes.Buffer, tag []byte) {
 }
 

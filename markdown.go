@@ -45,6 +45,7 @@ const (
 	EXTENSION_AUTO_HEADER_IDS                        // Create the header ID from the text
 	EXTENSION_BACKSLASH_LINE_BREAK                   // translate trailing backslashes into line breaks
 	EXTENSION_DEFINITION_LISTS                       // render definition lists
+	EXTENSION_WIKI_LINK                              // wiki link
 	EXTENSION_LATEX_MATH                             // latex inline and display math surrounded by '$' or '$$'
 
 	commonHtmlFlags = 0 |
@@ -142,6 +143,14 @@ var blockTags = map[string]bool{
 	"figcaption": true,
 }
 
+var WikiLinkWorker = func(out *bytes.Buffer, link []byte) {
+	out.WriteString(`<a href="`)
+	attrEscape(out, link)
+	out.WriteString(`">`)
+	out.Write(link)
+	out.WriteString(`</a>`)
+}
+
 // Renderer is the rendering interface.
 // This is mostly of interest if you are implementing a new rendering format.
 //
@@ -180,6 +189,7 @@ type Renderer interface {
 	Image(out *bytes.Buffer, link []byte, title []byte, alt []byte)
 	LineBreak(out *bytes.Buffer)
 	Link(out *bytes.Buffer, link []byte, title []byte, content []byte)
+	WikiLink(out *bytes.Buffer, link []byte)
 	RawHtmlTag(out *bytes.Buffer, tag []byte)
 	TripleEmphasis(out *bytes.Buffer, text []byte)
 	StrikeThrough(out *bytes.Buffer, text []byte)
