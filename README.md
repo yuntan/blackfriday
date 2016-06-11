@@ -1,5 +1,13 @@
+Saturday
+========
+Saturday is a fork of [Blackfriday](https://github.com/russross/blackfriday) tailored for how we use Markdown on [Write.as](https://write.as), i.e. for minimal formatting help.
+
+## Changes
+
+* Removed smart periods, quotes, angles & backticks (unconfigurable options in Smartypants) `72080d7`
+
 Blackfriday [![Build Status](https://travis-ci.org/russross/blackfriday.svg?branch=master)](https://travis-ci.org/russross/blackfriday) [![GoDoc](https://godoc.org/github.com/russross/blackfriday?status.svg)](https://godoc.org/github.com/russross/blackfriday)
-===========
+-----------
 
 Blackfriday is a [Markdown][1] processor implemented in [Go][2]. It
 is paranoid about its input (so you can safely feed it user-supplied
@@ -13,8 +21,7 @@ extensions. An experimental LaTeX output engine is also included.
 It started as a translation from C of [Sundown][3].
 
 
-Installation
-------------
+### Installation
 
 Blackfriday is compatible with Go 1. If you are using an older
 release of Go, consider using v1.1 of blackfriday, which was based
@@ -33,8 +40,7 @@ import it into a project:
 
 and `go get` without parameters.
 
-Usage
------
+### Usage
 
 For basic usage, it is as simple as getting your input into a byte
 slice and calling:
@@ -46,7 +52,7 @@ feature set, use this instead:
 
     output := blackfriday.MarkdownCommon(input)
 
-### Sanitize untrusted content
+#### Sanitize untrusted content
 
 Blackfriday itself does nothing to protect against malicious content. If you are
 dealing with user-supplied markdown, we recommend running blackfriday's output
@@ -66,7 +72,7 @@ unsafe := blackfriday.MarkdownCommon(input)
 html := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
 ```
 
-### Custom options
+#### Custom options
 
 If you want to customize the set of options, first get a renderer
 (currently either the HTML or LaTeX output engines), then use it to
@@ -94,8 +100,7 @@ can be copied to wherever you need it without worrying about
 dependencies and library versions.
 
 
-Features
---------
+### Features
 
 All features of Sundown are supported, including:
 
@@ -133,8 +138,7 @@ All features of Sundown are supported, including:
     W3C validation tool for HTML 4.01 and XHTML 1.0 Transitional.
 
 
-Extensions
-----------
+### Extensions
 
 In addition to the standard markdown syntax, this package
 implements the following extensions:
@@ -216,8 +220,7 @@ implements the following extensions:
     <sup>4</sup>&frasl;<sub>5</sub>.
 
 
-Other renderers
----------------
+### Other renderers
 
 Blackfriday is structured to allow alternative rendering engines. Here
 are a few of note:
@@ -246,8 +249,7 @@ are a few of note:
 *   [Md2Vim](https://github.com/FooSoft/md2vim): transforms markdown files into vimdoc format.
 
 
-Todo
-----
+### Todo
 
 *   More unit testing
 *   Improve unicode support. It does not understand all unicode
@@ -256,8 +258,7 @@ Todo
     some instances. It is safe on all utf-8 input.
 
 
-License
--------
+### License
 
 [Blackfriday is distributed under the Simplified BSD License](LICENSE.txt)
 
