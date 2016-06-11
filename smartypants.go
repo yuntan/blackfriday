@@ -376,7 +376,6 @@ func smartypants(flags int) *smartypantsRenderer {
 		r['"'] = smartAngledDoubleQuote
 		r['&'] = smartAmpAngledQuote
 	}
-	r['\''] = smartSingleQuote
 	r['('] = smartParens
 	if flags&HTML_SMARTYPANTS_DASHES != 0 {
 		if flags&HTML_SMARTYPANTS_LATEX_DASHES == 0 {
@@ -385,7 +384,6 @@ func smartypants(flags int) *smartypantsRenderer {
 			r['-'] = smartDashLatex
 		}
 	}
-	r['.'] = smartPeriod
 	if flags&HTML_SMARTYPANTS_FRACTIONS == 0 {
 		r['1'] = smartNumber
 		r['3'] = smartNumber
@@ -394,7 +392,5 @@ func smartypants(flags int) *smartypantsRenderer {
 			r[ch] = smartNumberGeneric
 		}
 	}
-	r['<'] = smartLeftAngle
-	r['`'] = smartBacktick
 	return r
 }
