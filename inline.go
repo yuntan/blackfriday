@@ -271,9 +271,12 @@ func link(p *parser, out *bytes.Buffer, data []byte, offset int) int {
 
 	// skip any amount of whitespace or newline
 	// (this is much more lax than original markdown syntax)
-	for i < len(data) && isspace(data[i]) {
-		i++
-	}
+	// -- And something we don't want in Write.as
+	/*
+		for i < len(data) && isspace(data[i]) {
+			i++
+		}
+	*/
 
 	switch {
 	// inline style link
