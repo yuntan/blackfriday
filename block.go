@@ -1329,43 +1329,46 @@ func (p *parser) paragraph(out *bytes.Buffer, data []byte) int {
 		}
 
 		// an underline under some text marks a header, so our paragraph ended on prev line
-		if i > 0 {
-			if level := p.isUnderlinedHeader(current); level > 0 {
-				// render the paragraph
-				p.renderParagraph(out, data[:prev])
+		// -- But we don't want Setext-style headers on Write.as. atx is great.
+		/*
+			if i > 0 {
+				if level := p.isUnderlinedHeader(current); level > 0 {
+					// render the paragraph
+					p.renderParagraph(out, data[:prev])
 
-				// ignore leading and trailing whitespace
-				eol := i - 1
-				for prev < eol && data[prev] == ' ' {
-					prev++
-				}
-				for eol > prev && data[eol-1] == ' ' {
-					eol--
-				}
-
-				// render the header
-				// this ugly double closure avoids forcing variables onto the heap
-				work := func(o *bytes.Buffer, pp *parser, d []byte) func() bool {
-					return func() bool {
-						pp.inline(o, d)
-						return true
+					// ignore leading and trailing whitespace
+					eol := i - 1
+					for prev < eol && data[prev] == ' ' {
+						prev++
 					}
-				}(out, p, data[prev:eol])
+					for eol > prev && data[eol-1] == ' ' {
+						eol--
+					}
 
-				id := ""
-				if p.flags&EXTENSION_AUTO_HEADER_IDS != 0 {
-					id = sanitized_anchor_name.Create(string(data[prev:eol]))
+					// render the header
+					// this ugly double closure avoids forcing variables onto the heap
+					work := func(o *bytes.Buffer, pp *parser, d []byte) func() bool {
+						return func() bool {
+							pp.inline(o, d)
+							return true
+						}
+					}(out, p, data[prev:eol])
+
+					id := ""
+					if p.flags&EXTENSION_AUTO_HEADER_IDS != 0 {
+						id = sanitized_anchor_name.Create(string(data[prev:eol]))
+					}
+
+					p.r.Header(out, work, level, id)
+
+					// find the end of the underline
+					for data[i] != '\n' {
+						i++
+					}
+					return i
 				}
-
-				p.r.Header(out, work, level, id)
-
-				// find the end of the underline
-				for data[i] != '\n' {
-					i++
-				}
-				return i
 			}
-		}
+		*/
 
 		// if the next line starts a block of HTML, then the paragraph ends here
 		if p.flags&EXTENSION_LAX_HTML_BLOCKS != 0 {
