@@ -1,10 +1,14 @@
 Saturday
 ========
-Saturday is a fork of [Blackfriday](https://github.com/russross/blackfriday) tailored for how we use Markdown on [Write.as](https://write.as), i.e. for minimal formatting help.
+Saturday is a fork of [Blackfriday](https://github.com/russross/blackfriday) used on [Write.as](https://write.as).
+
+We love Markdown, but aren't a Markdown-only platform. So we've stripped out and modified redundant or potentially frustrating syntax in this library.
 
 ## Changes
 
-* Removed smart periods, quotes, angles & backticks (unconfigurable options in Smartypants) `72080d7`
+* Made images and links behave like standard Markdown (now they won't render when there are spaces between label/alt-text and URL) 12db6e2f7ebcc5d6d88e5b330e4c6d88b577bc95
+* Only support atx-style headings 32843b3dfc510153e76d8f535a9084fc8e22245a
+* Removed smart periods, quotes, angles & backticks 72080d757965efc04255fd25ad97c76ef6f03ea9
 
 Blackfriday [![Build Status](https://travis-ci.org/russross/blackfriday.svg?branch=master)](https://travis-ci.org/russross/blackfriday) [![GoDoc](https://godoc.org/github.com/russross/blackfriday?status.svg)](https://godoc.org/github.com/russross/blackfriday)
 -----------
