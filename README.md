@@ -9,6 +9,8 @@ We love Markdown, but aren't a Markdown-only platform. So we've stripped out and
 * Made images and links behave like standard Markdown (now they won't render when there are spaces between label/alt-text and URL) 12db6e2f7ebcc5d6d88e5b330e4c6d88b577bc95
 * Only support atx-style headings 32843b3dfc510153e76d8f535a9084fc8e22245a
 * Removed smart periods, quotes, angles & backticks 72080d757965efc04255fd25ad97c76ef6f03ea9
+* Only support horizontal rules made of hyphens f75e5c8d41435593b7f24243e5c22b50f2b399b4
+* Only support fenced code blocks, not indented blocks 8223c01e430de7fd35f3c38ef75f802734cc0cfc
 
 Blackfriday [![Build Status](https://travis-ci.org/russross/blackfriday.svg?branch=master)](https://travis-ci.org/russross/blackfriday) [![GoDoc](https://godoc.org/github.com/russross/blackfriday?status.svg)](https://godoc.org/github.com/russross/blackfriday)
 -----------
