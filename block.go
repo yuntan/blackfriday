@@ -78,19 +78,6 @@ func (p *parser) block(out *bytes.Buffer, data []byte) {
 			continue
 		}
 
-		// indented code block:
-		//
-		//     func max(a, b int) int {
-		//         if a > b {
-		//             return a
-		//         }
-		//         return b
-		//      }
-		if p.codePrefix(data) > 0 {
-			data = data[p.code(out, data):]
-			continue
-		}
-
 		// fenced code block:
 		//
 		// ``` go
