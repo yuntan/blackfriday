@@ -538,8 +538,8 @@ func (p *parser) isHRule(data []byte) bool {
 		i++
 	}
 
-	// look at the hrule char
-	if data[i] != '*' && data[i] != '-' && data[i] != '_' {
+	// character must be a hyphen, otherwise not HR
+	if data[i] != '-' {
 		return false
 	}
 	c := data[i]
