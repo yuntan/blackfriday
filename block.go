@@ -98,10 +98,6 @@ func (p *parser) block(out *bytes.Buffer, data []byte) {
 		// horizontal rule:
 		//
 		// ------
-		// or
-		// ******
-		// or
-		// ______
 		if p.isHRule(data) {
 			p.r.HRule(out)
 			var i int
