@@ -11,6 +11,7 @@ We love Markdown, but aren't a Markdown-only platform. So we've stripped out and
 * Removed smart periods, quotes, angles & backticks 72080d757965efc04255fd25ad97c76ef6f03ea9
 * Only support horizontal rules made of hyphens f75e5c8d41435593b7f24243e5c22b50f2b399b4
 * Only support fenced code blocks, not indented blocks 8223c01e430de7fd35f3c38ef75f802734cc0cfc
+* Keep leading spaces in paragraphs 24845d212205e789fe24ec27ebc1c4cd121523c9
 
 Blackfriday [![Build Status](https://travis-ci.org/russross/blackfriday.svg?branch=master)](https://travis-ci.org/russross/blackfriday) [![GoDoc](https://godoc.org/github.com/russross/blackfriday?status.svg)](https://godoc.org/github.com/russross/blackfriday)
 -----------
