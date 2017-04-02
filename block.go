@@ -1278,11 +1278,7 @@ func (p *parser) renderParagraph(out *bytes.Buffer, data []byte) {
 		return
 	}
 
-	// trim leading spaces
 	beg := 0
-	for data[beg] == ' ' {
-		beg++
-	}
 
 	// trim trailing newline
 	end := len(data) - 1
