@@ -374,7 +374,8 @@ func (options *Html) FootnoteItem(out *bytes.Buffer, name, text []byte, flags in
 
 func (options *Html) List(out *bytes.Buffer, text func() bool, flags int) {
 	marker := out.Len()
-	doubleSpace(out)
+	// TODO: do this when rendering a top-level (not sub-) list
+	//doubleSpace(out)
 
 	if flags&LIST_TYPE_DEFINITION != 0 {
 		out.WriteString("<dl>")
