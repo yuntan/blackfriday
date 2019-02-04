@@ -1,6 +1,6 @@
 Saturday
 ========
-Saturday is a fork of [Blackfriday](https://github.com/russross/blackfriday) used on [Write.as](https://write.as).
+Saturday is a fork of [Blackfriday](https://github.com/russross/blackfriday) used on [Write.as](https://write.as) / [WriteFreely](https://writefreely.org).
 
 We love Markdown, but aren't a Markdown-only platform. So we've stripped out and modified redundant or potentially frustrating syntax in this library.
 
