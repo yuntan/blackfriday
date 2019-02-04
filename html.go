@@ -43,6 +43,7 @@ const (
 	HTML_SMARTYPANTS_LATEX_DASHES              // enable LaTeX-style dashes (with HTML_USE_SMARTYPANTS and HTML_SMARTYPANTS_DASHES)
 	HTML_SMARTYPANTS_ANGLED_QUOTES             // enable angled double quotes (with HTML_USE_SMARTYPANTS) for double quotes rendering
 	HTML_FOOTNOTE_RETURN_LINKS                 // generate a link at the end of a footnote to return to the source
+	HTML_HASHTAGS                              // enable WriteFreely hashtag extraction
 )
 
 var (
@@ -641,8 +642,39 @@ func (options *Html) NormalText(out *bytes.Buffer, text []byte) {
 	}
 }
 
+// Hashtags parses out hashtags and wraps them in less ambiguous formatting
+func (options *Html) Hashtags(out *bytes.Buffer, text []byte) {
+	// Find all hashtags in the plain text
+	indxs := hashRe.FindAllSubmatchIndex(text, -1)
+	if len(indxs) > 0 {
+		// Hashtags were found, so mark the index where our output will start
+		last := 0
+		for _, ti := range indxs {
+			// ti is 4-len an array of: [hashtag_start, hashtag_end, tag_name_start, tag_name_end]
+			// Write out text up to the start of the hashtag
+			out.Write(text[last:ti[0]])
+			// Get the tag name
+			t := string(text[ti[2]:ti[3]])
+			// Output a less ambiguous bit of text indicating that this is a hashtag
+			out.WriteString("{{[[||" + t + "||]]}}")
+			// Mark where the next bit of text to output will start
+			last = ti[3]
+		}
+		out.Write(text[last:])
+	} else {
+		// Pass along the plain text without modification
+		out.Write(text)
+	}
+}
+
 func (options *Html) Smartypants(out *bytes.Buffer, text []byte) {
 	smrt := smartypantsData{false, false}
+
+	if options.flags&HTML_HASHTAGS != 0 {
+		var hashtagged bytes.Buffer
+		options.Hashtags(&hashtagged, text)
+		text = hashtagged.Bytes()
+	}
 
 	// first do normal entity escaping
 	var escaped bytes.Buffer
