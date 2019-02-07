@@ -12,6 +12,7 @@ We love Markdown, but aren't a Markdown-only platform. So we've stripped out and
 * Only support horizontal rules made of hyphens
 * Only support fenced code blocks, not indented blocks
 * Keep leading spaces in paragraphs
+* Hashtag parsing with the `HTML_HASHTAGS` flag. This wraps hashtags in unambiguous characters, so an application can properly find and replace them.
 
 Blackfriday [![Build Status](https://travis-ci.org/russross/blackfriday.svg?branch=master)](https://travis-ci.org/russross/blackfriday) [![GoDoc](https://godoc.org/github.com/russross/blackfriday?status.svg)](https://godoc.org/github.com/russross/blackfriday)
 -----------
