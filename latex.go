@@ -39,7 +39,7 @@ func (options *Latex) GetFlags() int {
 }
 
 // render code chunks using verbatim, or listings if we have a language
-func (options *Latex) BlockCode(out *bytes.Buffer, text []byte, lang string) {
+func (options *Latex) BlockCode(out *bytes.Buffer, text []byte, lang, name string) {
 	if lang == "" {
 		out.WriteString("\n\\begin{verbatim}\n")
 	} else {

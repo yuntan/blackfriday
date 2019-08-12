@@ -255,8 +255,17 @@ func (options *Html) HRule(out *bytes.Buffer) {
 	out.WriteByte('\n')
 }
 
-func (options *Html) BlockCode(out *bytes.Buffer, text []byte, lang string) {
+func (options *Html) BlockCode(out *bytes.Buffer, text []byte, lang, name string) {
 	doubleSpace(out)
+
+	// embed code block name as data attribute
+	if name == "" {
+		out.WriteString("<pre>")
+	} else {
+		out.WriteString("<pre class=\"named\" data-name=\"")
+		attrEscape(out, []byte(name))
+		out.WriteString("\">")
+	}
 
 	// parse out the language names/classes
 	count := 0
@@ -268,7 +277,7 @@ func (options *Html) BlockCode(out *bytes.Buffer, text []byte, lang string) {
 			continue
 		}
 		if count == 0 {
-			out.WriteString("<pre><code class=\"language-")
+			out.WriteString("<code class=\"language-")
 		} else {
 			out.WriteByte(' ')
 		}
@@ -277,7 +286,7 @@ func (options *Html) BlockCode(out *bytes.Buffer, text []byte, lang string) {
 	}
 
 	if count == 0 {
-		out.WriteString("<pre><code>")
+		out.WriteString("<code>")
 	} else {
 		out.WriteString("\">")
 	}

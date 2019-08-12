@@ -161,7 +161,7 @@ var blockTags = map[string]struct{}{
 // Currently Html and Latex implementations are provided
 type Renderer interface {
 	// block-level callbacks
-	BlockCode(out *bytes.Buffer, text []byte, lang string)
+	BlockCode(out *bytes.Buffer, text []byte, lang, name string)
 	BlockQuote(out *bytes.Buffer, text []byte)
 	BlockHtml(out *bytes.Buffer, text []byte)
 	Header(out *bytes.Buffer, text func() bool, level int, id string)

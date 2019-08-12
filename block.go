@@ -544,9 +544,8 @@ func (*parser) isHRule(data []byte) bool {
 
 // isFenceLine checks if there's a fence line (e.g., ``` or ``` go) at the beginning of data,
 // and returns the end index if so, or 0 otherwise. It also returns the marker found.
-// If syntax is not nil, it gets set to the syntax specified in the fence line.
 // A final newline is mandatory to recognize the fence line, unless newlineOptional is true.
-func isFenceLine(data []byte, syntax *string, oldmarker string, newlineOptional bool) (end int, marker string) {
+func isFenceLine(data []byte, oldmarker string, newlineOptional bool) (end int, marker, lang, name string) {
 	i, size := 0, 0
 
 	// skip up to three spaces
@@ -556,10 +555,10 @@ func isFenceLine(data []byte, syntax *string, oldmarker string, newlineOptional 
 
 	// check for the marker characters: ~ or `
 	if i >= len(data) {
-		return 0, ""
+		return
 	}
 	if data[i] != '~' && data[i] != '`' {
-		return 0, ""
+		return
 	}
 
 	c := data[i]
@@ -572,82 +571,83 @@ func isFenceLine(data []byte, syntax *string, oldmarker string, newlineOptional 
 
 	// the marker char must occur at least 3 times
 	if size < 3 {
-		return 0, ""
+		return
 	}
 	marker = string(data[i-size : i])
 
 	// if this is the end marker, it must match the beginning marker
 	if oldmarker != "" && marker != oldmarker {
-		return 0, ""
+		return
 	}
 
-	// TODO(shurcooL): It's probably a good idea to simplify the 2 code paths here
-	// into one, always get the syntax, and discard it if the caller doesn't care.
-	if syntax != nil {
-		syn := 0
-		i = skipChar(data, i, ' ')
+	syn := 0
+	i = skipChar(data, i, ' ')
 
-		if i >= len(data) {
-			if newlineOptional && i == len(data) {
-				return i, marker
-			}
-			return 0, ""
+	if i >= len(data) {
+		if newlineOptional && i == len(data) {
+			return
+		}
+		return
+	}
+
+	syntaxStart := i
+
+	if data[i] == '{' {
+		i++
+		syntaxStart++
+
+		for i < len(data) && data[i] != '}' && data[i] != '\n' {
+			syn++
+			i++
 		}
 
-		syntaxStart := i
+		if i >= len(data) || data[i] != '}' {
+			return
+		}
 
-		if data[i] == '{' {
-			i++
+		// strip all whitespace at the beginning and the end
+		// of the {} block
+		for syn > 0 && isspace(data[syntaxStart]) {
 			syntaxStart++
-
-			for i < len(data) && data[i] != '}' && data[i] != '\n' {
-				syn++
-				i++
-			}
-
-			if i >= len(data) || data[i] != '}' {
-				return 0, ""
-			}
-
-			// strip all whitespace at the beginning and the end
-			// of the {} block
-			for syn > 0 && isspace(data[syntaxStart]) {
-				syntaxStart++
-				syn--
-			}
-
-			for syn > 0 && isspace(data[syntaxStart+syn-1]) {
-				syn--
-			}
-
-			i++
-		} else {
-			for i < len(data) && !isspace(data[i]) {
-				syn++
-				i++
-			}
+			syn--
 		}
 
-		*syntax = string(data[syntaxStart : syntaxStart+syn])
+		for syn > 0 && isspace(data[syntaxStart+syn-1]) {
+			syn--
+		}
+
+		i++
+	} else {
+		for i < len(data) && !isspace(data[i]) {
+			syn++
+			i++
+		}
+	}
+
+	a := bytes.Split(data[syntaxStart:syntaxStart+syn], []byte(":"))
+	lang = string(a[0])
+	if len(a) > 1 {
+		name = string(a[1])
 	}
 
 	i = skipChar(data, i, ' ')
 	if i >= len(data) || data[i] != '\n' {
 		if newlineOptional && i == len(data) {
-			return i, marker
+			end = i
+			return
 		}
-		return 0, ""
+		return
 	}
 
-	return i + 1, marker // Take newline into account.
+	end = i + 1
+	return
 }
 
 // fencedCodeBlock returns the end index if data contains a fenced code block at the beginning,
 // or 0 otherwise. It writes to out if doRender is true, otherwise it has no side effects.
 // If doRender is true, a final newline is mandatory to recognize the fenced code block.
 func (p *parser) fencedCodeBlock(out *bytes.Buffer, data []byte, doRender bool) int {
-	var syntax string
-	beg, marker := isFenceLine(data, &syntax, "", false)
+	beg, marker, lang, name := isFenceLine(data, "", false)
 	if beg == 0 || beg >= len(data) {
 		return 0
 	}
@@ -659,7 +659,7 @@ func (p *parser) fencedCodeBlock(out *bytes.Buffer, data []byte, doRender bool) 
 
 		// check for the end of the code block
 		newlineOptional := !doRender
-		fenceEnd, _ := isFenceLine(data[beg:], nil, marker, newlineOptional)
+		fenceEnd, _, _, _ := isFenceLine(data[beg:], marker, newlineOptional)
 		if fenceEnd != 0 {
 			beg += fenceEnd
 			break
@@ -681,7 +681,7 @@ func (p *parser) fencedCodeBlock(out *bytes.Buffer, data []byte, doRender bool) 
 	}
 
 	if doRender {
-		p.r.BlockCode(out, work.Bytes(), syntax)
+		p.r.BlockCode(out, work.Bytes(), lang, name)
 	}
 
 	return beg
@@ -997,7 +997,7 @@ func (p *parser) code(out *bytes.Buffer, data []byte) int {
 
 	work.WriteByte('\n')
 
-	p.r.BlockCode(out, work.Bytes(), "")
+	p.r.BlockCode(out, work.Bytes(), "", "")
 
 	return i
 }
